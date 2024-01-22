@@ -2,6 +2,8 @@ package com.pinchzoom
 
 import android.view.View
 import com.ablanco.zoomy.DoubleTapListener
+import com.ablanco.zoomy.PinchEndListener
+import com.ablanco.zoomy.PinchStartListener
 import com.ablanco.zoomy.TapListener
 import com.ablanco.zoomy.Zoomy
 import com.facebook.react.bridge.Arguments
@@ -15,7 +17,12 @@ import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.events.RCTEventEmitter
 
 
-class PinchZoomViewManager : ViewGroupManager<PinchZoomView>(), DoubleTapListener, TapListener {
+class PinchZoomViewManager :
+  ViewGroupManager<PinchZoomView>(),
+  DoubleTapListener,
+  TapListener,
+  PinchStartListener,
+  PinchEndListener {
   override fun getName() = "PinchZoomView"
 
   override fun createViewInstance(reactContext: ThemedReactContext): PinchZoomView {
@@ -28,6 +35,8 @@ class PinchZoomViewManager : ViewGroupManager<PinchZoomView>(), DoubleTapListene
     val builder = Zoomy.Builder(activity)
       .doubleTapListener(this)
       .tapListener(this)
+      .pinchStartListener(this)
+      .pinchEndListener(this)
       .target(child)
     builder.register()
   }
@@ -36,6 +45,8 @@ class PinchZoomViewManager : ViewGroupManager<PinchZoomView>(), DoubleTapListene
     return MapBuilder.builder<String, Any>()
       .put("onDoubleTap", MapBuilder.of("registrationName", "onDoubleTap"))
       .put("onTap", MapBuilder.of("registrationName", "onTap"))
+      .put("onPinchStart", MapBuilder.of("registrationName", "onPinchStart"))
+      .put("onPinchEnd", MapBuilder.of("registrationName", "onPinchEnd"))
       .build()
   }
 
@@ -49,12 +60,21 @@ class PinchZoomViewManager : ViewGroupManager<PinchZoomView>(), DoubleTapListene
     val id = zoomView.id
     (v.context as ThemedReactContext).sendEventToJs(id, "onDoubleTap")
   }
-
-
   override fun onTap(v: View) {
     val zoomView = v.parent as PinchZoomView
     val id = zoomView.id
     (v.context as ThemedReactContext).sendEventToJs(id, "onTap")
+  }
+
+  override fun onPinchStart(v: View) {
+    val zoomView = v.parent as PinchZoomView
+    val id = zoomView.id
+    (v.context as ThemedReactContext).sendEventToJs(id, "onPinchStart")
+  }
+  override fun onPinchEnd(v: View) {
+    val zoomView = v.parent as PinchZoomView
+    val id = zoomView.id
+    (v.context as ThemedReactContext).sendEventToJs(id, "onPinchEnd")
   }
 
   fun ReactContext.sendEventToJs(

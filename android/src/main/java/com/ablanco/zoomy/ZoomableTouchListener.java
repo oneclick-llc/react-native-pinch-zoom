@@ -31,6 +31,8 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     private final TapListener mTapListener;
     private final LongPressListener mLongPressListener;
     private final DoubleTapListener mDoubleTapListener;
+    private final PinchStartListener mPinchStartListener;
+    private final PinchEndListener mPinchEndListener;
     private int mState = STATE_IDLE;
     private TargetContainer mTargetContainer;
     private View mTarget;
@@ -92,7 +94,9 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
                           ZoomListener zoomListener,
                           TapListener tapListener,
                           LongPressListener longPressListener,
-                          DoubleTapListener doubleTapListener) {
+                          DoubleTapListener doubleTapListener,
+                          PinchStartListener pinchStartListener,
+                          PinchEndListener pinchEndListener) {
         this.mTargetContainer = targetContainer;
         this.mTarget = view;
         this.mConfig = config;
@@ -104,6 +108,8 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         this.mTapListener = tapListener;
         this.mLongPressListener = longPressListener;
         this.mDoubleTapListener = doubleTapListener;
+        this.mPinchStartListener = pinchStartListener;
+        this.mPinchEndListener = pinchEndListener;
     }
 
     @Override
@@ -125,6 +131,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
                         break;
                     case STATE_POINTER_DOWN:
                         if (!((PinchZoomView)v.getParent()).getDisabledPinchZoom()) {
+                          mPinchStartListener.onPinchStart(mTarget);
                           mState = STATE_ZOOMING;
                           MotionUtils.midPointOfEvent(mInitialPinchMidPoint, ev);
                           startZoomingView(mTarget);
@@ -159,6 +166,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
                 switch (mState) {
                     case STATE_ZOOMING:
+                        mPinchEndListener.onPinchEnd(mTarget);
                         endZoomingView();
                         break;
                     case STATE_POINTER_DOWN:
