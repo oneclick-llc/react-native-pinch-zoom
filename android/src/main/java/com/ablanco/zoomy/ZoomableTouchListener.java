@@ -3,6 +3,7 @@ package com.ablanco.zoomy;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -69,6 +70,7 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
     private Runnable mEndingZoomAction = new Runnable() {
         @Override
         public void run() {
+            Log.d("PinchZoomView", "mEndingZoomAction");
             removeFromDecorView(mShadow);
             removeFromDecorView(mZoomableView);
             mTarget.setVisibility(View.VISIBLE);
@@ -108,8 +110,17 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
     @Override
     public boolean onTouch(View v, MotionEvent ev) {
-           // fixed issue for 3 fingers touch
-         if (mAnimatingZoomEnding || ev.getPointerCount() > 2) { mEndingZoomAction.run(); return true; }
+        Log.d("PinchZoomView", "onTouch");
+        // fixed issue for 3 fingers touch
+        if (ev.getPointerCount() > 2) {
+          Log.d("PinchZoomView", "onTouch registered more than 2 pointers");
+          mEndingZoomAction.run();
+          return true;
+        }
+        if (mAnimatingZoomEnding) {
+          Log.d("PinchZoomView", "onTouch registered when ZoomableView Reset Animation is running");
+          return true;
+        }
 
         mScaleGestureDetector.onTouchEvent(ev);
         mGestureDetector.onTouchEvent(ev);
@@ -176,15 +187,19 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
 
     private void endZoomingView() {
+        Log.d("PinchZoomView", "endZoomingView");
         if (mConfig.isZoomAnimationEnabled()) {
+            Log.d("PinchZoomView", "Animate ZoomableView Reset");
             mAnimatingZoomEnding = true;
             mZoomableView.animate()
+                    .setDuration(350)
                     .x(mTargetViewCords.x)
                     .y(mTargetViewCords.y)
                     .scaleX(1)
                     .scaleY(1)
                     .setInterpolator(mEndZoomingInterpolator)
-                    .withEndAction(mEndingZoomAction).start();
+                    .withEndAction(mEndingZoomAction)
+                    .start();
         } else mEndingZoomAction.run();
     }
 
