@@ -18,6 +18,8 @@ interface PinchZoomProps extends PropsWithChildren<any> {
   disableScrollViewOnPinch?: boolean;
   onDoubleTap?: () => void;
   onTap?: () => void;
+  onPinchStart?(): void;
+  onPinchEnd?(): void;
   disabledPinchZoom?: boolean;
 }
 

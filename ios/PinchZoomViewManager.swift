@@ -40,6 +40,23 @@ class PinchZoomView : ZoomableView {
         }
     }
     
+    @objc
+    var onPinchStart: RCTDirectEventBlock? = nil {
+        didSet {
+          _onPinchStart = { [weak self] in
+                self?.onPinchStart?([:])
+            }
+        }
+    }
+    @objc
+    var onPinchEnd: RCTDirectEventBlock? = nil {
+        didSet {
+            _onPinchEnd = { [weak self] in
+                self?.onPinchEnd?([:])
+            }
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         isZoomable = true

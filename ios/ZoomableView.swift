@@ -27,6 +27,9 @@ public class ZoomableView: UIView {
     var onPanDoubleTap: (() -> Void)? = nil
     var onPanTap: (() -> Void)? = nil
 
+    var _onPinchStart: (() -> Void)? = nil
+    var _onPinchEnd: (() -> Void)? = nil
+
     /// Add/remove gesture if the view is/isn't zoomable
     public var isZoomable: Bool = false {
         didSet {
@@ -140,6 +143,7 @@ public class ZoomableView: UIView {
     private func imagePinched(_ pinch: UIPinchGestureRecognizer) {
         if !isEnableZoom { return }
         if pinch.state == .began {
+            _onPinchStart?()
             parentScrollView.forEach { $0.value?.isScrollEnabled = false }
             beginSourceViewFrame = sourceView!.frame
             isZooming = true
@@ -185,6 +189,7 @@ public class ZoomableView: UIView {
                     self.beginSourceViewFrame = nil
                 }
                 self.isZooming = false
+                _onPinchEnd?()
                 self.delegate?.zoomableViewEndZoom(self)
             })
     }

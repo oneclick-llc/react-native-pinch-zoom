@@ -24,6 +24,8 @@ import { PinchZoomView } from "react-native-pinch-zoom";
 // onDoubleTap - callback which will be called on double tap
 // onTap - callback which will be called on tap
 // disabledPinchZoom - togglePinchZoom
+// onPinchStart - called when Pinch starts
+// onPinchEnd - called when Pinch ends
 
 <PinchZoomView disableScrollViewOnPinch>
   <Video

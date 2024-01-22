@@ -6,5 +6,7 @@ RCT_EXPORT_VIEW_PROPERTY(disabledPinchZoom, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(disableScrollViewOnPinch, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(onDoubleTap, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onTap, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPinchStart, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPinchEnd, RCTDirectEventBlock)
 
 @end
