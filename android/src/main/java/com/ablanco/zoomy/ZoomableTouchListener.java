@@ -82,7 +82,8 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
 
             if (mZoomListener != null) mZoomListener.onViewEndedZooming(mTarget);
 
-            if (mConfig.isImmersiveModeEnabled()) showSystemUI();
+            Boolean shouldAdjustSystemUi = ((PinchZoomView)mTarget.getParent()).getShouldAdjustSystemUi();
+            if (mConfig.isImmersiveModeEnabled() && shouldAdjustSystemUi) showSystemUI();
         }
     };
 
@@ -225,7 +226,8 @@ class ZoomableTouchListener implements View.OnTouchListener, ScaleGestureDetecto
         disableParentTouch(mTarget.getParent());
         mTarget.setVisibility(View.INVISIBLE);
 
-        if (mConfig.isImmersiveModeEnabled()) hideSystemUI();
+        Boolean shouldAdjustSystemUi = ((PinchZoomView)mTarget.getParent()).getShouldAdjustSystemUi();
+        if (mConfig.isImmersiveModeEnabled() && shouldAdjustSystemUi) hideSystemUI();
         if (mZoomListener != null) mZoomListener.onViewStartedZooming(mTarget);
     }
 

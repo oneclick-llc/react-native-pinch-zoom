@@ -21,6 +21,12 @@ interface PinchZoomProps extends PropsWithChildren<any> {
   onPinchStart?(): void;
   onPinchEnd?(): void;
   disabledPinchZoom?: boolean;
+  /**
+   * @platform Android
+   *
+   * @defaults true
+   */
+  shouldAdjustSystemUi?: boolean;
 }
 
 const ComponentName = 'PinchZoomView';

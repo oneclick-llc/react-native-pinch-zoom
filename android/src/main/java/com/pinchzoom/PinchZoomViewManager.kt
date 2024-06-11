@@ -52,6 +52,11 @@ class PinchZoomViewManager :
     view.disabledPinchZoom = isDisabled
   }
 
+  @ReactProp(name = "shouldAdjustSystemUi", defaultBoolean = true)
+  fun setShouldAdjustSystemUi(view: PinchZoomView, shouldAdjustSystemUi: Boolean) {
+    view.shouldAdjustSystemUi = shouldAdjustSystemUi
+  }
+
   override fun onDoubleTap(v: View) {
     val zoomView = v.parent as PinchZoomView
     val id = zoomView.id
