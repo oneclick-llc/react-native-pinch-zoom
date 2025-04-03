@@ -26,17 +26,49 @@ class PinchZoomView : ZoomableView {
     @objc
     var onDoubleTap: RCTDirectEventBlock? = nil {
         didSet {
-            onPanDoubleTap = { [weak self] in
-                self?.onDoubleTap?([:])
+            // print("PinchZoomView | onDoubleTap.didSet | is present: \(onDoubleTap != nil)")
+            guard let onDoubleTap else {
+                onPanDoubleTap = nil
+                // print("PinchZoomView | removing DoubleTap Gesture")
+                doubleTapGesture.map { removeGestureRecognizer($0) }
+                doubleTapGesture = nil
+                return
             }
+            onPanDoubleTap = { onDoubleTap([:]) }
+
+            // print("PinchZoomView | adding DoubleTap Gesture")
+            doubleTapGesture = UITapGestureRecognizer(
+                target: self,
+                action: #selector(doubleTapped)
+            )
+            doubleTapGesture?.numberOfTapsRequired = 2
+            doubleTapGesture.map { addGestureRecognizer($0) }
         }
     }
     @objc
     var onTap: RCTDirectEventBlock? = nil {
         didSet {
-            onPanTap = { [weak self] in
-                self?.onTap?([:])
+            // print("PinchZoomView | onTap.didSet | is present: \(onTap != nil)")
+            guard let onTap else {
+                onPanTap = nil
+
+                // print("PinchZoomView | removing Tap Gesture")
+                tapGesture.map { removeGestureRecognizer($0) }
+                tapGesture = nil
+
+                return
             }
+            onPanTap = { onTap([:]) }
+
+            // print("PinchZoomView | adding Tap Gesture")
+            tapGesture = UITapGestureRecognizer(
+                target: self,
+                action: #selector(oneTapped)
+            )
+            if let doubleTapGesture = doubleTapGesture {
+                tapGesture?.require(toFail: doubleTapGesture)
+            }
+            tapGesture.map { addGestureRecognizer($0) }
         }
     }
     

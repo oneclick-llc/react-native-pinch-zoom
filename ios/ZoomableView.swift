@@ -78,12 +78,6 @@ public class ZoomableView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         isUserInteractionEnabled = true
-        doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(doubleTapped))
-        tapGesture = UITapGestureRecognizer(target: self, action: #selector(oneTapped))
-        tapGesture?.require(toFail: doubleTapGesture!)
-        doubleTapGesture?.numberOfTapsRequired = 2
-        doubleTapGesture.map { addGestureRecognizer($0) }
-        tapGesture.map { addGestureRecognizer($0) }
     }
 
     required init?(coder: NSCoder) {
@@ -125,13 +119,13 @@ public class ZoomableView: UIView {
         return subview?.nativeID == "pinchZoomTapSkippable"
     }
     @objc
-    private func doubleTapped(_ gesture: UITapGestureRecognizer) {
+    func doubleTapped(_ gesture: UITapGestureRecognizer) {
         if shouldSkip(gesture) { return }
         onPanDoubleTap?()
     }
 
     @objc
-    private func oneTapped(_ gesture: UITapGestureRecognizer) {
+    func oneTapped(_ gesture: UITapGestureRecognizer) {
         if shouldSkip(gesture) { return }
         onPanTap?()
     }
