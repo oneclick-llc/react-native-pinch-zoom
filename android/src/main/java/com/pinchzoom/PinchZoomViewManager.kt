@@ -9,7 +9,6 @@ import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.WritableMap
-import com.facebook.react.common.MapBuilder
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
@@ -39,12 +38,12 @@ class PinchZoomViewManager :
   }
 
   override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> {
-    return MapBuilder.builder<String, Any>()
-      .put("onDoubleTap", MapBuilder.of("registrationName", "onDoubleTap"))
-      .put("onTap", MapBuilder.of("registrationName", "onTap"))
-      .put("onPinchStart", MapBuilder.of("registrationName", "onPinchStart"))
-      .put("onPinchEnd", MapBuilder.of("registrationName", "onPinchEnd"))
-      .build()
+    return mutableMapOf(
+      "onDoubleTap" to mapOf("registrationName" to "onDoubleTap"),
+      "onTap" to mapOf("registrationName" to "onTap"),
+      "onPinchStart" to mapOf("registrationName" to "onPinchStart"),
+      "onPinchEnd" to mapOf("registrationName" to "onPinchEnd"),
+    )
   }
 
   @ReactProp(name = "disabledPinchZoom")
