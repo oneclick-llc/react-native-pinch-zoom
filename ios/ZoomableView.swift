@@ -23,6 +23,11 @@ public class ZoomableView: UIView {
     public var isZooming = false
     private var beginSourceViewFrame: CGRect?
     private var parentScrollView: [Weak<UIScrollView>] = []
+    /// Each parent scroll view's own `isScrollEnabled` when a pinch took it
+    /// over (Looky-20514): `reset` hands back exactly that, so a scroll view
+    /// another owner keeps disabled — the tab pager with swiping off — stays
+    /// disabled. `nil` while no pinch holds the parents.
+    private var parentScrollEnabledBeforePinch: [Bool]? = nil
 
     var onPanDoubleTap: (() -> Void)? = nil
     var onPanTap: (() -> Void)? = nil
@@ -138,6 +143,9 @@ public class ZoomableView: UIView {
         if !isEnableZoom { return }
         if pinch.state == .began {
             _onPinchStart?()
+            if parentScrollEnabledBeforePinch == nil {
+                parentScrollEnabledBeforePinch = parentScrollView.map { $0.value?.isScrollEnabled ?? true }
+            }
             parentScrollView.forEach { $0.value?.isScrollEnabled = false }
             beginSourceViewFrame = sourceView!.frame
             isZooming = true
@@ -164,7 +172,14 @@ public class ZoomableView: UIView {
     /// Set the image back to it's initial state.
     @objc func reset() {
         scale = 1.0
-        parentScrollView.forEach { $0.value?.isScrollEnabled = true }
+        // also reached on every orientation change, pinch or not: only a
+        // pinch's own disabling is undone
+        if let previous = parentScrollEnabledBeforePinch {
+            for (index, parent) in parentScrollView.enumerated() where index < previous.count {
+                parent.value?.isScrollEnabled = previous[index]
+            }
+            parentScrollEnabledBeforePinch = nil
+        }
         self.backgroundView?.backgroundColor = .clear
         UIView.animate(
             withDuration: 0.35,
